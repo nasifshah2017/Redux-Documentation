@@ -1,0 +1,204 @@
+Without Reducer
+
+import React, { useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import ColorCounter from "../components/ColorCounter";
+
+const COLOR_INCREMENT = 15;
+
+const SquareScreen = () => {
+
+    // Three different state values (red, green and blue)
+
+    const [red, setRed] = useState(0);
+    const [green, setGreen] = useState(0);
+    const [blue, setBlue] = useState(0);
+
+    const setColor = (color, change) => {
+
+        // color === 'red', 'green', 'blue'
+        // change === +15, -15
+
+        switch(color) {
+            
+            case "red":
+                red + change > 255 || red + change < 0 ? null : setRed(red + change);
+            
+            case "green":
+                green + change > 255 || green + change < 0 ? null : setGreen(green + change);
+
+            case "blue":
+                blue + change > 255 || blue + change < 0 ? null : setBlue(blue + change);
+            
+            default:
+                return;
+        }
+    }
+
+    return (
+        <View>
+            <ColorCounter
+                color="Red"
+                onIncrease={() => setColor("red", COLOR_INCREMENT)}      // Passing function as a prop
+                onDecrease={() => setColor("red", -1 * COLOR_INCREMENT)}  
+            />
+            <ColorCounter 
+                color="Blue"
+                onIncrease={() => setColor("blue", COLOR_INCREMENT)}
+                onDecrease={() => setColor("blue", -1 * COLOR_INCREMENT)} 
+            />
+            <ColorCounter 
+                color="Green"
+                onIncrease={() => setColor("green", COLOR_INCREMENT)} 
+                onDecrease={() => setColor("green" -1 * COLOR_INCREMENT)}
+            />
+
+            <View                                        // Built-in component from react-native
+                style={{ 
+                    height: 150, 
+                    width: 150, 
+                    backgroundColor: `rgb(${red},${green},${blue})`
+                }} 
+            />
+        </View>
+    )
+};
+
+const styles = StyleSheet.create({});
+
+export default SquareScreen;
+
+// 1. What piece of data is changing in our app?
+// 2. What "type" of data is it?
+// 3. What is the data's starting (default) value?
+
+// 1. red, green, blue
+// 2. number
+// 3. 255
+
+
+// Parent Component - SquareScreen: 
+// needs to read the three different state values
+
+// Child Component - ColorCounter (red), ColorCounter (green), ColorCounter (blue): 
+// These three ColorCounter components need to change the three different state values
+
+// Generally, we create the state variables in the most parent component that needs to 
+// read or change a state value. 
+
+// If a child needs to read a state value, the parent can pass it down as a prop
+
+// Note: ColorCounter does not need to read the state values! This is just of our info.
+
+
+Quick Thoughts:
+
+1. App works right now - we could leave it as-is! But we could make it "slightly better..."
+
+2. We have three "seperate" pieces of state.
+
+3. For this app, these three pieces of state are extremely related to each other. 
+
+4. There is a precise set of well-known way in which we update these values.
+
+5. This makes our state a great candidate for being managed by a "reducer".
+
+
+Reducer: Function that manages/changes to an object
+
+1. Real fancy name
+
+2. Function that gets called with two objects.
+
+3. Argument # 1 - Object that has all of our state in it ---> {red: 0, green: 0, blue: 0}.
+
+4. Argument # 2 - Object that describes the update we want to make ---> {colorToChange: "red", amount: 15}.
+
+5. We look at Argument # 2 and use it to decide how to change Argument # 1.
+
+6. Two technicalities:
+
+	i) We never change Argument # 1 "directly".
+
+	ii) We must always return a value to be used as Argument # 1. 
+
+
+With Reducer:
+
+import React, { useReducer } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import ColorCounter from "../components/ColorCounter";
+
+const COLOR_INCREMENT = 15;
+
+const reducer = (state, action) => {       // action: The change that we need to make to our state
+
+    // state === {red: number, green: number, blue: number}
+    
+    // action === {colorToChange: "red" || "green" || "blue", amount: 15 || -15}
+
+    switch(action.colorToChange) {  // We are never going to change our state directly: state.red = state.red + 15. We will never do that. 
+        
+        // Copying the state as it is and only making change to the item of the object indicated in the action, in this case red,
+        // if the item indicated in the action does not match then we are keeping the state as it is and moving to the next item in the 
+        // next case.
+
+        case "red":  
+            return state.red + action.amount > 255 || state.red + action.amount < 0    
+            ? state
+            : { ...state, red: state.red + action.amount };  
+        
+        case "green": // If the value is above 255 or below 0 then no change will be applied and the state will be returned as it is
+            return state.green + action.amount > 255 || state.green + action.amount < 0    
+            ? state
+            : { ...state, green: state.green + action.amount }; 
+        
+        case "blue": 
+            return state.blue + action.amount > 255 || state.blue + action.amount < 0    
+            ? state
+            : { ...state, blue: state.blue + action.amount }; 
+        
+        default:
+            return state;
+    }
+        
+};
+
+const SquareScreenWithReducer = () => {
+
+    // dispatch: The function that runs the reducer
+
+    const [state, dispatch] = useReducer(reducer, {red: 0, green: 0, blue: 0});
+
+    return (
+        <View>
+            <ColorCounter
+                color="Red"
+                onIncrease={() => dispatch({ colorToChange: "red", amount: COLOR_INCREMENT })}      
+                onDecrease={() => dispatch({ colorToChange: "red", amount: -1 * COLOR_INCREMENT })}  
+            />
+            <ColorCounter 
+                color="Blue"
+                onIncrease={() => dispatch({ colorToChange: "blue", amount: COLOR_INCREMENT })}
+                onDecrease={() => dispatch({ colorToChange: "blue", amount: -1 * COLOR_INCREMENT })} 
+            />
+            <ColorCounter 
+                color="Green"
+                onIncrease={() => dispatch({ colorToChange: "green", amount: COLOR_INCREMENT })} 
+                onDecrease={() => dispatch({ colorToChange: "green", amount: -1 * COLOR_INCREMENT })}
+            />
+
+            <View                                        // Built-in component from react-native
+                style={{ 
+                    height: 150, 
+                    width: 150, 
+                    backgroundColor: `rgb(${state.red},${state.green},${state.blue})`
+                }} 
+            />
+        </View>
+    )
+};
+
+const styles = StyleSheet.create({});
+
+export default SquareScreenWithReducer;
