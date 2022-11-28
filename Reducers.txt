@@ -50,7 +50,7 @@ const SquareScreen = () => {
             <ColorCounter 
                 color="Green"
                 onIncrease={() => setColor("green", COLOR_INCREMENT)} 
-                onDecrease={() => setColor("green" -1 * COLOR_INCREMENT)}
+                onDecrease={() => setColor("green", -1 * COLOR_INCREMENT)}
             />
 
             <View                                        // Built-in component from react-native
