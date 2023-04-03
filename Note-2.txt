@@ -1,0 +1,97 @@
+Lecture-79: Redux and React
+
+After the lesson we have some notion as what Redux is and why you might want to use it? The question now is how you actually use it. Well, this is the part where it is going to get confusing
+
+for a little while. I always try and manage going into something new by coding as well as talking about some base level concepts, but in this case we are going to go back to the kind of pep
+
+talk we mentioned in the last video bacause in my experience the worst thing you can do with Redux is just start coding, there are a lot of moving pieces and so I just want to talk through
+
+kind of our journey, I do not want to unnecessarily slow us down but this is in my opinion is try and set expectations as we start tackling the Redux monster. I have on the screen an image 
+
+from bennadel.com, he is a blogger and a JavaScript Cold Fusion guy, but this came out about Angular-1 and I remember first time seeing it, that it is exactly how it feels where you have an 
+
+x-axis of time and an y-axis of feelings and you have a slow steady curve going up where you learn a little bit and say that this is really neat and then you work on it a little bit more
+
+and you fall back and think this is so lame and then again you learn a little bit more and then you have the great pop-up of Oh! This is pretty sweet and then you have another downfall 
+
+where you realize that things are so much difficult than they need to be, this is so stupid, then you again have that pop up, then drop down and again have that pop up, then drop down and 
+
+eventually you get to the point where you say that this is the most awesome framework ever. 
+
+
+This is pretty common for most frameworks I would say as you get better at them provided that they are quality frameworks, you will have a sentiment like this. 
+
+
+Unfortunately, I never found the Redux chart to look quite like this, we draw the pretty much the same chart, then I will give you an y-axis of feelings because that will be what the y-axis
+
+represents and I am going to draw the x-axis through the middle and the x-axis will be Time. 
+
+In my experience the way it tends to go is like this where you start off you learn a little bit and you say, "Wow! Its kind of cool", you have a little pop-up and then you realize how I 
+
+actually do this? And then it goes all the way down where you get really fraustrated and you get really confused, and you absolutely cannot use it and you get to the point where you are 
+
+thinking this is so dumb why would anyone use this, it is so confusing and the pay off is so minimal. It would be better to manage component state and pass it around than doing this. 
+
+
+Well, here what we are going for, we are going for that point where you break through and keep going up in the graph and then you realize this is awesome. 
+
+
+This point is not going to come fast, you are not going to have lot of those little wins along the way like from the Angular chart and what you are used to because it is kind of all at a 
+
+once type thing. 
+
+
+The question we are looking to answer here is the how? How do we do Redux? It needs to be done in the right way in order to manage the entire application state. That is why it is going to
+
+feel confusing. It is just going to, unless you have a lot of experince with functional programming, it is going to feel contrived and you are going to feel like that there are too many 
+
+moving parts. 
+
+
+This is exactly how I felt when I first learned Redux. I started by thinking Wow!! I see some advantages here and then I wanted to abandone it as an illustration as how my process was like
+
+and how it is going to be very easy to feel this way is that I felt like I was learning how to juggle but I was not really learning how to juggle, it is just an illustration but I wanted 
+
+to go and take juggling lessons. I do not know how to juggle and this is very fun. I get to the first lesson, I do not know how to juggle and the teacher gives me 9 balls to start with.
+
+He does not give them to me, he throws them to me and just expects me to catch them and start throwing them in the air, and I want to tell him that I can't even juggle three balls why are
+
+you giving me 9 balls? 
+
+
+That is what Redux felt like. It felt like that all of a sudden, you are asking me to start with this crazy 9 balls juggle, and I cannot do that. Well, as time passes and you hit that point
+
+where you figure out how to juggle with 9 balls and then you will realize that this is very easy. 
+
+
+No one is ever going to ask you to get better to the point where you can juggle knives or juggle flaming toches or stand on an Elephant's back on one foot while people shoot bean bags at
+
+you, and you juggle knives, or chainsaws or whatever. It never gets more complicated than the very beginning. 
+
+
+So, you just need to get to tha point where you understand all of the moving pieces as why are they the way they are and then you will redo the same thing over and over and over and over. 
+
+cdnjs.cloudflare.com/ajax/libs/redux/4.0.1/redux.js
+
+This is the link of the source-code for Redux JS, if we copy it and paste it on VS-Code, we see that it is 685 lines. But if we remove all the extra lines and all the comments, then we get
+
+250-300 lines in total. So, it is not a big chunk of JavaScript, it is actually quite small. It is just going to be a matter of getting those pieces down. 
+
+
+We will cover these pieces in two stages here. The rest of this lesson we are going to talk about how Redux works with React. 
+
+
+So, Redux being this thing that we know is good but we do not really know how it works but how it interacts with React, so that you have a sense as how the puzzle pieces work. 
+
+In the next lesson we are going to talk more specificly about how Redux itself works. So, this is sort of a macrocasm followed by a microcasm and then we will actually start to code it out.
+
+
+In any React-Redux app we have couple of distinced pieces, we have the Redux piece and then we have the React piece.
+
+
+						Redux 						React
+
+
+Redux has no idea that React exists, it is not going to and it does not need to know, meanwhile React has no idea that Redux exists, in the same way it does not need to know and we are 
+
+going to keep them completely separate. 

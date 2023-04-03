@@ -1,0 +1,119 @@
+Lecture-78: What is Redux?
+
+This is the most potential for fraustration section in the course. We are going to cover Redux. Going all the way back to the beginning of the course, I feel the same way about Redux that 
+
+I do about React. I love it, it had made my life so much better at times but I do not like teaching it because it is very hard to know where to start with somebody who is brand new to it, 
+
+if you are a new developer and you do not have much experience with functional programming and/or you are trying to keep all the layers straight that you are working with then it gets very
+
+confusing very fast, so do we start very simple where we only have few moving parts and that would be very understandable but essentially useless because nobody does things like that in the
+
+real world or do we do it in the current industry standard way which will look very complicated where it is completely out of control and it is very intimidating to approach. 
+
+
+So, it is absolutely worth knowing and worth fighting to the end of this if you get fraustrated but the way this particular lesson is going to go is that I am going to start by telling you
+
+what Redux is? 
+
+
+Give you a sense as why you would want to use it and I am going to kind of provide like a pep talk as how to keep you motivated as surely you are going to get confused at times. 
+
+
+First of all, what is Redux in very simple terms, Redux is a State Management Tool. If you do not know it then that is okay as I am going to go great lengths, to make you understand it. 
+
+Redux can also be called a library. 
+
+
+								Redux - State Management Tool/Library 
+
+
+A library is just like React, it is a bunch of JavaScript that someone else wrote to make our life easier. Redux is supposed to make our lives easier and it is very awesome when it is used 
+
+properly and in the right, it is absolutely a beautiful thing to which makes development easier. 
+
+Well, we know what State is, we have been using State the entire course, going all the way back to the middle of the first section and what we have done so far is that we have done 
+
+component-based State Management. 
+
+
+What does that mean? As in what we did in the last section with React Router, is that we had a Home component and the Home component had a piece of state called MovieList. 
+
+The Home component went out to the API, made an HTTP request and the API sent back some JSON and the Home component managed that inside of that piece of state, the State array. 
+
+
+We did the same thing in our individual Movie component, the component sent our HTTP request to the API, the API went to the server, the server sent back the JSON, and the Movie component
+
+knew what it was doing. The component managed its own state, nobody knew what the MovieList was in the Home component, nobody knew what the Movie object was in the Movie component. 
+
+They managed themselves entirely. 
+
+
+If we take a step back to another project, if we go back to our AWS app project. That was our FlashCard app or if you go back to the Temperature or the BoilingPoint app then those were the
+
+same, where we had a component up at the very top and it was called the App component and the App component filtered down to couple of different places. In the case of the FlashCard, the 
+
+App rendered the QuizBar Component on the left and over the right hand side it rendered the FlashCard component. 
+
+
+Then inside of the FlashCard component we had another component that was rendered conditionally, it was either RegularCard or MultiCard or RandomWeighted or whatever. So, in the QuizBar
+
+component an action would happen, and that event needed to be known over at the FlashCard component, but we do not have a good way if we manange state in the QuizBar Component, and then 
+
+make the State communicate over to the FlashCard component because they are sibling components. That is why we moved the component to the App and then the App component filtered it down to 
+
+the appropriate component. 
+
+
+It was brilliant, it was super easy, there were no problem and it was a very good solution. We are still managing State at the component level, this is not application state at this point
+
+because even though it feels like QuizBar component is changing the App state but it is not, the App component manages its own state and then the App component sends down a callback to let
+
+the QuizBar know that, "Hey! if something happens then run this code, I will change my own state, you do not ever change my state, I change my own State, you just run a little bit of code 
+
+and that will be me updating the State and do not worry about that as that is not your problem. It is a fantastic solution but only when the application is small. 
+
+
+If you get your dream job working as a Software Engineer for some huge tech company and that company uses React, then sooner or later you are going to end up in a situation where you are 
+
+going to have tons and tons of components everywhere and it is very possible to have a large application where there are 100 components on the screen at the same time making up the UI and 
+
+what will happen at that point is that, something is going to happen at a component, at the very bottom level, and that needs to be known at the very top level and then we will be in a very
+
+big trouble, because what will happen if we just do what we talked about, because as the application gets bigger and bigger then where is everything going to end up living as stuffs move up
+
+from the bottom, if we have all the different needs that is happening at different components, then eventually everything is going to end up living at the very top, inside the App component
+
+and then it is going to get super-bloated. It is going to be absolutely a disaster because you are going to be sending down callbacks 10 layers deep and you are going to be changing State 
+
+in components where you have no idea of what it is doing and there is no way another developer is going to sit down and understand that and it is going to be a total disaster. This is where
+
+Redux is going to come into play!
+
+
+Redux is going to create something called the Store and it is much more complicated than this but what we will have is a Store that is external to our application or its outside of the 
+
+component structure and it will create a pub subtype model where if something happens in a certain component, for example something happens in Component-A, then that component can update
+
+the Store, so it can push or publish ou something that happened. 
+
+Meanwhile, some other component somewhere else needs to know about that, for example Component-B needs to know about that, for example Component-B needs to know about what happened in 
+
+Component-A then Component-B can subscribe to the Store and Component-B will be notified when that thing happened. 
+
+
+It is a super simple overview of how it works but Redux is going to work like a global Store where we can keep application state and not component state because we are still going to use 
+
+State as we have but we are going to start Redux which is going to give us the ability to put stuff in a place where any component can use it. 
+
+What is the reason, at the very bottom we end up adding another component and that component has couple of arms to it and as we get down that far eventually and that component at the very
+
+bottom right needs to create an action that other components need to know about or it just needs to know that something happened in the app, instead of passing the State all the way to the 
+
+bottom to that component, the component can go straight to the Store and get that information.  
+
+
+Redux is for large applications. There is no way we are going to be able to make an application of this size that justifies Redux in this course. It is going to be for a large app, but it
+
+is absolutely phenomenal for managing application state in an easy and maintainable way that can be sealed over a long period of time across a whole bunch of developers because it creates 
+
+good uniformity for how the whole application manages its State.
