@@ -95,3 +95,112 @@ In any React-Redux app we have couple of distinced pieces, we have the Redux pie
 Redux has no idea that React exists, it is not going to and it does not need to know, meanwhile React has no idea that Redux exists, in the same way it does not need to know and we are 
 
 going to keep them completely separate. 
+
+
+Redux is not meant to work exclusively with React, we can use Redux with Vue or Angular, we can also use it without an UI framework, just use the JavaScript to yourself if you need to. 
+
+React also does not need Redux, we have not been using it all along so these two things are totally distinced from each other. 
+
+
+So, you need to keep in mind that some of the things that we talk about with Redux are specific to Redux. 
+
+The things those goes under Redux:
+
+1. Actions
+
+2. Action Creators
+
+3. Reducers
+
+4. Dispatcher
+
+5. Store
+
+All of these things have nothing to do with React and React will not know that any of these exist. Whereas, React has its own things. Things that goes under React:
+
+1. State
+
+2. Component
+
+React has its own State, it has its own components, all of the things that make up React, Redux does not know about any of them and that is fine and we are going to keep it that way. 
+
+In order to get React communicate with Redux we are going to have something in the middle called "React-Redux". 
+
+
+React-Redux is another framework module that we are going to install. This is because React and Redux are two different libraries those are not made to work with each other, we can go 
+
+through the extra length to make them work with each other but the developers' community has already done that, and React will talk to Ract-Redux, and React-Redux will be in the middle 
+
+taking care of all of the business of communicating React with Redux. 
+
+
+The React-Redux framework will also have its own built-in components. 
+
+
+The things that React-Redux will have: 
+
+1. Provider
+
+2. connect()
+
+
+We will look into these so please be patient. The point is there are things in our application those are going to be totally Redux specific. These are concepts that can be applied anywhere.
+
+There are naturally the React stuff that we have been using all along, we are not going to change any of that because React will not have any idea that any of these are going on. Then there
+
+are going to be parts those are specific to React-Redux that we would not use if we had taken Redux somewhere else but are very necessary in order to get React and Redux to talk to each 
+
+other. 
+
+
+So, we have got the Store under Redux, and we are going to refer to it as an object. We can put as much in there or as little in there, remember as in the last lesson, the Store is going to
+
+be the place where any component can go to and then the component can update the Store and get stuff from the Store. It is a little bit more complicated than that but it is going to be the 
+
+gist.
+
+
+We have our React App and our React App has all been pretty much the same, since we started using create-react-app, we have the index.js at the top, and then we have the app.js and then it 
+
+funnels down to whatever the component structure looks like. 
+
+
+Our goal is to make any of the components, under the App component, talk to the Store. 
+
+
+Whatever the component it happens to be, and the way we are going to do that as React and Redux do not know anything about each other, so the Provider (React-Redux) component is going to 
+
+know about the Store, and we are going to take the Provider component and we are going to cover the entire React application, which means we are going to render the Provider component 
+
+inside of the index.js file. 
+
+
+Index.js is going to have the Provider component inside of it, and the App component is going to have the Router component. So, we are going to have both things. In that way any component
+
+inside of React needs to access something from the Store, then that component is already inside of the Provider component being under the App component, and using the connect() function, 
+
+the Provider component (React-Redux) will be able to connect to the Store (Redux). 
+
+
+The connect() function which is part of React-Redux will be inside of a React component that needs to know about Redux and because that component is already inside of the Provider, it will 
+
+be able to connect to the Store. 
+
+
+As we practically do it, it will get more and more clear. The main point of this lesson is that React and Redux are not connected in any way by default. 
+
+
+Redux has its own moving parts, React has its own moving parts and React-Redux will get them to work together, because we want our components in React to be able to go to the Store and grab
+
+the State or update the State from anywhere in the application in seamless and trouble-free way as possible, that is why this whole architecture exists. 
+
+
+We are going to use the Provider component and the connect() function inorder to communicate between React and Redux. We will not have enough involvement in that process but this is how at 
+
+the high-level we are going to get them to work. 
+
+
+In the next lesson we are going to breakdown how Redux is going to work because that is going to be a fairly substantial part of any Redux application, is the Redux specific part and then 
+
+we will tie it altogether. 
+
