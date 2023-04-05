@@ -1,0 +1,230 @@
+Lecture-80: How Redux works
+
+In this lesson we are specifically going to look at how Redux does its things. We talked about how React and Redux interact with each other through React-Redux. So, Redux has the Store, we 
+
+already talked a lot about that. We have got an object inside the Store and that makes up our application state. It can be as big or small as we want it to be. Again, forget about React and
+
+forget about React-Redux. This is just Redux doing its thing. The way that Redux works is that the Store is informed by a bunch of little functions. 
+
+These are bunch of anonymous functions 
+
+				
+				Functions 
+	
+	Store{}			() => {}
+
+				() => {}
+
+				() => {}		
+
+
+There can be lot of loigics behind it, or there can be a tiny bit of logic whatever the case is, each of the little reducers return an object and whatever they return, will collectively 
+
+make up the Store. The Store itself you do not put anything in there, we never mess with the Store directly, we never update the Store directly instead we use these Reducers, they are 
+
+functions those return a piece of state and then Redux will handle updating the Store. 
+
+
+It is similar to "this.setState()", we never ever mess directly with the State in React, we never mess directly with State in react, we never mess with the Store directly in Redux, we use 
+
+these Reducers, and these Reducers return little pieces of State. Their own little pieces of State. Their own little pieces of State and all of those things together collectively make up 
+
+the Store. 
+
+
+The Reducers are not built into Redux, they are functions that we are going to write, we are completely responsible for writing them and there are couple of rules on writing them, and we 
+
+will deal with those rules when we actually write our Reducers but the Reducers are just tiny functions that we write and then these Reducers return State and all those pieces of State
+
+added together will create the entire Store. 
+
+
+You can think about the Store as a grocery store, or a hardware store. We can think of each of the Reducers as little departments. 
+
+
+                                Reducers 
+	
+	Store{}			() => {}  Milk & Eggs
+
+				() => {}  Meats
+
+				() => {}  Produce
+
+
+So, the first could be the Milk and Eggs department, the second reducer could be the Meats department, the third reducer could be the Produce department. We need all the items from each of
+
+these departments (Reducers) individually to fill up the entire grocery store. 
+
+
+In order to update the Reducers we have Action Creators and we are going to write the Action Creators as well. 
+
+
+Action Creators are also little functions, they are little functions those create the Actions, 
+
+
+                                Reducers 
+	
+	Store{}			() => {}  Milk & Eggs
+
+				() => {}  Meats
+
+				() => {}  Produce 
+
+
+       Action Creators
+
+       Actions 
+
+
+These four terms that we have written here are four big terms when it comes to Redux. They are the Store, Reducers, Action Creators and Actions. An Action is simply going to be a little 
+
+object and there are rules surrounding the Actions but at the absolute bare minimum for an Action is that it is an object with atleast a property of "type", and as an example of value to 
+
+this property we are going to put it as Auth. 
+
+
+                                Reducers 
+	
+	Store{}			() => {}  Milk & Eggs
+
+				() => {}  Meats
+
+				() => {}  Produce 
+
+
+       Action Creators
+
+       Actions
+
+       {
+
+	type: AUTH
+
+       }
+
+
+We are using AUTH as just an example, do not worry about this as this does not make any difference right now, we are just using it as a placeholder. 
+
+
+We can have other stuffs there but an Action is just very simply a little object with a property of type. 
+
+
+An Action Creator is a little function that makes an Action. So, to illustrate below we will show that Action Creators return Actions,  
+
+
+                                Reducers 
+	
+	Store{}			() => {}  Milk & Eggs
+
+				() => {}  Meats
+
+				() => {}  Produce 
+
+
+       Action Creators () => Action
+
+       Actions
+
+       {
+
+	type: AUTH
+
+       }
+
+
+So, Reducers are little functions those return States and those States are put into the Store, Action Creators are little functions those return Actions. What is an Action? It is just an 
+
+object with the "type" property, that is as complicated as it is, even though it is going to feel complicated, that is really all there is to it. 
+
+
+So, we have got Action Creators and we have Actions. The last piece to complete the set here is called the Dispatch. The Dispatch is a function that is built into Redux. The Dispatch is 
+
+something that we do not write or make. We write the Reducers entirely ourselves, we write the Actions and the Action Creators entirely ourselves but we do not build the Store and we do not
+
+build the Dispatch. 
+
+
+The Dispatch is provided to us, it is part of the Store.
+
+
+                                Reducers 
+	
+	Store{}			() => {}  Milk & Eggs
+
+				() => {}  Meats
+
+				() => {}  Produce 
+
+                                
+                                Dispatch
+
+
+       Action Creators () => Action
+
+       Actions
+
+       {
+
+	type: AUTH
+
+       } 
+
+
+The function of the Dispatch is to dispatch an action. So, the Action Creator will make an Action, when the Action gets triggered, the Action will go to the Dispatch and the Dispatch will
+
+let every Reducer know that something has happened, in this case Dispatch will be like, "Hey! I have got an object with the type of AUTH, I do not know if you care but I am just letting you
+
+know". 
+
+
+Then each of the Reducer function will decide that "Do I care about this Action?", "Do I care about this particular type?" Ultimately we are going to have payload in most of these Actions 
+
+and here we will pretend that it is an Array,
+
+
+                                Reducers 
+	
+	Store{}			() => {}  Milk & Eggs
+
+				() => {}  Meats
+
+				() => {}  Produce 
+
+                                
+                                Dispatch
+
+
+       Action Creators () => Action
+
+       Actions
+
+       {
+
+	type: AUTH
+
+       }
+
+       payload: []
+
+
+Do not get hung up on this one right now, do not worry about how it works, we are talking at a very high level as how it operates, when we will code it out we will have a better foundation.
+
+The Action Creator will fire off an Action and that Action will go to the Dispatch and then the Dispatch will send it out to each Reducer because it has a type, each Reducer function will 
+
+know what type of Action it is and then the Reducer will decide does it care about this Action. If it does then it will get the payload from the Action and then it will return a new piece 
+
+of state to the Store bu if it does not care about the Action then the Reducer will return an old piece of state to the Store. 
+
+
+Whatever happens all the Reducer will get notified everytime an action is sent off by an Action Creator, and that is how the Store gets updated. 
+
+The Reducers return their little pieces of State. 
+
+Those pieces of State end up creating one big object in the Store, just like a grocery store or a hardware store. 
+
+The individual little Reducers get notified everytime an Action happens via the Dispatch. 
+
+Then the Reducers can update themselves based on the payload or whatever is sent by the Dispatch if they care about that Action. 
+
+They will always know what type of Action it was because of the type property in the Action's object.  
+ 
