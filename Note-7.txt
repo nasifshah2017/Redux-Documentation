@@ -1,0 +1,458 @@
+Lecture-84: Adding an action creator and an action
+
+The question now comes is what if we want to update the quantity of an item in any department. So, we need a 'plus' or a 'minus' button for all the items so as we click them, it will go up 
+
+and down. 
+
+
+So, lets go and get that set up, we will get rid of the file structure, we have gt the frozenInventory() function, we are looping through each item in the frozenReducer, instead of just 
+
+returning an li, we are going to render a button next to it. We will wrap the whole "li" in a div, and we will put next to it a button for "+" to increase the amount of item and we will put
+
+a button for "-" to decrease the amount.
+
+
+Before we can test these two buttons, we need to define the functions which would run on clicking these two buttons and these two functions will take two parameters "operation" and "index",
+
+and as we need to pass some data or the function to the onClick, but we cannot just do that, 
+
+
+										onClick = {this.increment}
+
+
+this will only send the return value of that function, instead we need to pass it like below,
+
+
+										onClick = {() => {this.increment()}}
+
+
+The outside brackets are for the JSX, the inside are for the function and we need to pass two parameters with this function, "+" and "i". So, for each of the item it will know which 
+
+direction for the operation seeing the "+" or "-" sign and it will know the one we are on because as we loop through each item we have the index as the "i".
+
+
+
+FrozenDept.js
+
+import React, { Component } from "react";
+
+import { connect } from "react-redux";
+
+
+class FrozenDept extends Component {
+
+	increment = (operation, index) => {
+
+		if(operation === "+") {
+
+			
+			} else if(operation === "-") {
+
+
+			}
+
+	}
+
+
+// We are stuck here, we do not know exactly what to do now because we are pulling the data using this.props.frozenData and the frozenData is coming from the "redux" store, 
+
+// function mapStateToProps(state) {
+
+//	return {
+
+//		frozenData: state.frozen
+
+//	}
+
+// }
+
+
+// So, we are not managing this state locally, this is where the "dispatch" is going to enter 
+
+
+	render() {
+
+		const frozenInventory = this.props.frozenData.map((item, i) => {
+
+				return (
+
+					<div key = {i}>
+
+						<li>{item.food}: {item.quantity}</li>
+
+						<input type = "button" onClick = {() => {this.increment("+", i)}} value = "+" />
+
+						<input type = "button" onClick = {() => {this.increment("-", i)}} value = "-" />
+
+					</div>
+
+				)
+
+		})
+
+			return(
+
+				<div>
+
+					<h1>The Frozen Food Department</h1>
+
+					<ul>
+
+						{frozenInventory}
+
+					</ul>
+
+				</div>
+
+			)
+
+		}
+
+	}
+
+
+function mapStatetoProps(state) {
+
+	return {
+
+		frozenData: state.frozen
+
+	}
+
+}
+
+
+export default connect(mapStateToProps)(FrozenDept);
+
+
+
+
+								Store				Reducers
+
+								 {}				() => {}
+
+												() => {}
+
+												() => {}
+
+
+								Action Creators () => Actions
+
+								Actions {
+
+									type: AUTH
+
+									payload: []
+
+								}
+
+
+
+We will look on this diagram, we have not done the Action and the Dispatch part yet, rather we did the Store {} and the Reducers part.
+
+
+The Reducers are what makes up the Store, bunch of little functions, each returning a piece of State to the Store. Inorder to change the Store, we change the Reducers, and in order to 
+
+change the Reducers we have the Dispatch. 
+
+
+							The Dispatch changes The Reducer, The Reducer changes The Store
+
+
+The Dispatch will take an Action as this part,
+
+
+							Action {
+
+								type: AUTH
+
+								payload: []
+
+							}
+
+
+The Dispatch will take an Action and then it will send it to each individual Reducer. 
+
+
+Action are made by Action Creators and Action Creators are just functions. 
+
+
+So, that is what we are going to do now, we are going to make an Action Creator with a couple of Actions.
+
+So, in our codebase we will make a new folder called 'actions' and in that folder we will make a new file called 'frozenInvUpdate.js', 
+
+This file is going to contain a very basic function. 
+
+
+frozenInvUpdate.js
+
+// This file is an Action Creator!!
+
+// Action Creators return Actions
+
+// Action is an object that has atleast a property of type.
+
+// This Action Creator is going to be handed to the Dispatch 
+
+
+export default () => {
+
+	return {
+
+		type: "updateFrozen"
+
+	}
+
+}
+
+
+All we did to make it a legitimate action is to return an object with the property "type" assigned to the value "updateFrozen". 
+
+
+There is nothing "redux" about this function. It is just a function that returns an object. The thing that is special about this object is that it needs to have a property of "type". This
+
+Action Creator is going to be handed to the Dispatch.
+
+
+We are going to make 2 more Action Creator files calling them meatInvUpdate.js and produceInvUpdate.js, 
+
+
+meatInvUpdate.js
+
+export default () => {
+
+	return {
+
+		type: "updateMeat"
+
+	}
+
+}
+
+
+produceInvUpdate.js
+
+export default () => {
+
+	return {
+
+		type: "updateProduce"
+
+	}
+
+}
+
+
+Now, we can absolutely put all three of these Action Creators in one file but we got three different Reducers and we are creating three different Action Creators to update each one of them.
+
+So, we have got three different Actions now, one for frozen, one for meat and one for produce. 
+
+
+Now, we will go back to our "react" component files and we will import each of the corresponding Action Creators to each of their corresponding "react" component files, and then we will use
+
+the Action Creator functions run, then we need to put a console.log in one of the Action Creator functions. 
+
+
+produceInvUpdate.js
+
+export default () => {
+
+	console.log("Updating produce inventory!!!")
+
+	return {
+
+		type: "updateProduce"
+
+	}
+
+}
+
+
+So, we have got the console.log in our Produce Action Creator function, in the ProduceDept.js file we import the Produce Action Creator file inside of our increment function in the 
+
+ProduceDept Component, if the user clicks on the plus (+) button we are going to call the Produce Action Creator function. 
+
+
+ProduceDept.js
+
+import React, { Component } from "react";
+
+import { connect } from "react-redux";
+
+import updateProduce from "../actions/produceInvUpdate";
+
+
+class ProduceDept extends Component {
+
+	increment = (operation, index) => {
+
+		if(operation === "+") {
+
+			updateProduce();
+
+		} else if (operation === "-") {
+
+		}
+
+	}
+
+	render() {
+
+		const produceInventory = this.props.produceData.map((item, i) => {
+
+			return(
+
+				<div key = {i}>
+
+					<li>{item.food}: {item.quantity}</li>
+
+					<input type = "button" onClick = {() => {this.increment("+", i)}} value = "+" />
+
+					<input type = "button" onClick = {() => {this.increment("-", i)}} value = "-" />
+
+				</div>
+
+			)
+
+		})
+
+			return (
+
+				<div>
+
+					<h1>The Produce Food Department</h1>
+
+					<ul>
+			
+						{produceInventory}
+
+					</ul>
+
+				</div>
+
+			)
+
+		)
+
+	}
+
+
+		function mapStateToProps(state) {
+
+			return {
+
+				produceData: state.produce
+
+			}
+
+		}
+
+
+export default connect(mapStateToProps)(ProduceDept); 
+
+
+
+
+Output:
+
+				The Frozen Food Department!
+
+					TV Dinners: 10
+
+					   |+|  |-|
+
+				      Frozen Veggies: 21
+					
+					   |+| |-|
+
+				      Frozen Pizzas: 25
+
+                                           |+| |-|
+
+				
+                                   
+                                  The Meat Food Department!
+
+                                      Chicken Brest: 14
+
+                                           |+| |-|
+
+                                          Bacon: 11
+
+                                           |+| |-|
+
+                                        Mahi Mahi: 35
+
+                                           |+| |-|
+
+                                         Salmon: 135
+
+                                           |+| |-|
+
+
+                                  The Produce Food Department!
+
+                                        Lettuce: 14
+
+                                  click ->|+| |-|
+
+                                        Turnips: 11
+
+                                          |+| |-|
+
+                                        Apples: 35
+
+                                          |+| |-|
+
+                                       Cilantro: 135
+
+                                          |+| |-|
+
+
+Now, if we click the plus (+) sign or any item at The Produce Food Department! Then this is what we get on our console.
+
+
+Console coding:
+
+Updating produce inventory!!
+
+
+Now, if we console.log the updateProduce action function that we are importing in the ProduceDept Component file, 
+
+
+	increment = (operation, index) => {
+
+		if(operation === "+") {
+
+			console.log(updateProduce());
+
+		} else if(operation === "-") {
+
+		}
+
+	}
+
+
+Then this is what we get on the console by clicking the plus (+) button,
+
+
+Console coding:
+
+	Update produce inventory!!!
+
+	{type: "updateProduce"}
+
+
+Now, not only it gives us the information instead it is returning the object in the produceInvUpdate or the updateProduce() function, containing property "type" and the value 
+
+"updateProduce" in it. 
+
+
+Now, it is important to remember here that we have not done a bit "redux" here. Nothing about what we did in this lesson is about redux, this is just JavaScript.
+
+
+In the next lesson we will connect the Action Creator to our component and then we will send our Action to the Dispatch so that all of the Reducers can get notified. 
+
+
+
+  
