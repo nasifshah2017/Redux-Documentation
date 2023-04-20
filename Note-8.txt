@@ -1,0 +1,308 @@
+Lecture-85: Adding The Dispatcher [Most Important]
+
+In this lesson we are going to connect the dispatch to our Component, so that this React Component <FrozenDept /> is using the "redux" state, we got the frozenInvUpdate.js file open, which 
+
+contains the action and the action creator that the <FrozenDept /> component is going to want to run, if the increment function inside the FrozenDept component is triggered and then we have
+
+the frozenReducer.js file open and the frozenReducer is the state inside of 'redux' that is informing the FrozenDept 'react' component and we need to give you guys a little warning here, is
+
+that this is the place where things tend to get really confusing. If you do not have everything before then hand down push through it and you may need to come back and watch this video 
+
+again after we have done a project or after you have fiddled it a little bit but there are just a lot going on because we are attaching absolutely everything in this one section and take 
+
+pride because at the end of this video you will know almost everything that you need to know about 'redux' with respect to 'react'. There will not be anything else that you hardly need to 
+
+do, it is just going to be JavaScript and logic and what not. You will know all the moving parts.
+
+
+We have already got "updateFrozen" imported as "frozenInvUpdate" in the FrozenDept component file and now we will call the updateFrozen (frozenInvUpdate) function inside the increment 
+
+function. We will take care of logic, we will pass everything through. We are going to pass the operation and the index in the updateFrozen() function.
+
+
+FrozenDept.js
+
+import React, { Component } from "react";
+
+
+// We want this component to know about redux. To do that, we need some help .... or some glue. The glue is react-redux! We need the connect() function. 
+
+
+import { connect } from "react-redux";
+
+import updateFrozen from "../actions/frozenInvUpdate";
+
+
+class FrozenDept extends Component {
+
+	increment = (operation, index) => {
+
+		// console.log(operation, index);
+
+		updateFrozen(operation, index);
+
+	}
+
+
+	render() {
+
+		const frozenInventory = this.props.frozenData.map((item, i) => {
+
+			return (
+
+				<div key = {i}>
+
+					<li>{item.food}: {item.quantity}</li>
+
+					<input type = "button" onClick = {() => {this.increment("+", i)}} value = "+" />
+
+					<input type = "button" onClick = {() => {this.increment("-", i)}} value = "-" />
+
+				</div>
+
+			)
+
+		})
+
+		return (
+
+			<div>
+
+				<h1>The Frozen Food Department</h1>
+
+				<ul>
+
+					{frozenInventory}
+
+				</ul>
+
+			</div>
+
+		)
+
+	)
+
+}
+
+
+function mapStateToProps(state) {
+
+	return {
+
+		frozenData: state.frozen
+
+	}
+
+}
+
+
+export default connect(mapStateToProps)(FrozenDept);
+
+
+
+We are passing the operation as "+" or "-" according to the user choice and the index which will be the index in that reducer, in this case it is the frozenReducer, and it is which data 
+
+(TV dinners, frozen pizzas, or frozen veggies) in the frozen reducer was updated by the user. So, we can go over to frozenInvUpdate.js and we are going to bring in our data, we are going
+
+to bring in our operation and we are going to bring in the index. Remember, there is no "redux" here yet, this is just JavaScript. If we want we can also console.log here the operation and
+
+the index, 
+
+
+
+frozenInvUpdate.js
+
+// This file is an action creator!!
+
+// Action creators return actions
+
+// Action is an object that has atleast a property of type
+
+// This action creator is going to be handed to the dispatch
+
+
+export default (operation, index) => {
+
+	console.log(operation, index);
+
+	return {
+
+		type: "updateFrozen"
+
+	}
+
+}
+
+
+
+So, everytime the increment function runs on the click of "+" or the "-" button, the updateFrozen() function gets called. The updateFrozen() function is the function that we are importing
+
+from the frozenInvUpdate.js file and in the function of the frozenInvUpdate we are console.logging operation and index which we will see on the console of our browser on click of the 
+
+buttons on the webpage.
+
+
+Browser:
+
+						The Frozen Food Department
+
+						     TV Dinners: 10 
+
+						Click ->|+| |-|
+
+						   Frozen Veggies: 21 
+
+							|+| |-|
+
+						   Frozen Pizzas: 25
+
+							|+| |-|
+
+
+Console:
+
++0								frozenInvUpdate.js
+
+If we click the "+" button on TV dinners we get "+0" and that is inside of our action here in "frozenInvUpdate". 
+
+						
+						 The Frozen Food Department
+
+						      TV Dinners: 10
+
+							 |+| |-| <- Click
+
+						     Frozen Veggies: 21
+
+							 |+| |-|
+
+						     Frozen Pizzas: 25
+
+							 |+| |-|
+
+Console:
+
+-1								frozenInvUpdate.js
+
+If we click "-" on frozen veggies we get "-1" on the console. Again same line frozenInvUpdate.
+
+
+Well, instead of just console.logging it we are going to add another property to our object and we are going to call it the payload, and this is by far the most common object that we are 
+
+going to pass in "redux". This is not the only that you will ever pass but this is by far the most common, you need to have a type because it is an action and the other thing that you will
+
+have is a payload, 
+
+
+frozenInvUpdate.js
+
+// This file is an action creator!
+
+// Action creator return actions
+
+// Action is an object that has at LEAST a property of type. This action creator is going to be handed to the dispatch
+
+
+export default (peration, index) => {
+
+	console.log(operation, index):
+
+	return {
+
+		type: "updateFrozen",
+
+		payload: {}
+
+	}
+
+}
+
+
+The payload just contains data or stuff that comes with this particular type. 
+
+Here, we have assigned the payload as an object and we will pass along the operation and the index,
+
+
+frozenInvUpdate.js
+
+// This file is an Action Creator!
+
+// Action Creators return actions
+
+// Action is an object that has at LEAST a property of type
+
+// This Action Creator is going to be handed to the dispatch 
+
+
+export default (operation, index) => {
+
+	console.log(operation, index);
+
+	return {
+
+		type: "updateFrozen"
+
+		payload: {
+
+			   operation, 
+
+			   index
+
+		}
+
+	}
+
+}
+
+
+
+So, we will have a payload.operation which will either be "+" or "-" and we will have payload.index which will be the index of the element.
+
+
+Now, this is great but we still do not have any connection to 'redux' because what we want if we go back to our diagram, 
+
+
+										Reducers
+				Store {}					() => {}
+
+										() => {}
+
+										() => {}
+
+				Action Creators
+
+				() => Action
+
+				Actions						Dispatch
+
+				{
+
+					type: AUTH
+
+					payload: []
+
+				}
+
+
+These all things on the diagram are 'redux' stuffs, the 'react' component has no idea that any of these exist. 'React' does not know about any of these stuffs. React is running a function
+
+that has an Action but it is not connected to the Dispatch in any way so, but we do technically have the Action and the Action Creator but they are not technically the part of 'redux' 
+
+because it will never ever get to the Reducer or to theStore.
+
+
+So, what we need to do is make it in a way that the "react" component can call the Action Creator function like it already has, as we are calling the frozenInvUpdate() or the updateFrozen()
+
+function in the 'react' component but we need to change it so when we call the updateFrozen() function, then the updateFrozen() function goes to the Dispatch. 
+
+
+Then from the Dispatch, it will go to each reducer and in that way the reducer can update the Store and then inside of our 'react' component where we are mapping through 
+
+"this.props.frozenData" instead we will be mapping through a new piece of state. 
+
+
+So, we will start by going to the frozenReducer, we are going to go to the frozenReducer and there we are going to console.log, "Frozen Reduecer is running!" and then we are going to 
+
+console.log the "action".  
+
+  
