@@ -1013,3 +1013,265 @@ not only the frozenReducer but the other reducers as well. Every reducer is gett
 That is why we are going to put an if-else statement condition inside the frozenReducer function where if the type property of the object in the frozen reducer is 'updateFrozen' then it 
 
 means that the frozenReducer cares, and if the action.type is not equal to 'updateFrozen' then the frozenReducer will return the state. 
+
+
+frozenReducer.js
+
+// All reducers take 2 parameters/arguments
+
+// 1. Current State, usually provide a default state
+
+// 2. Info that came from any action
+
+
+	const seedData = [
+
+		{
+
+			food: "TV Dinners"
+
+			quantity: 10
+
+		},
+
+		{
+
+			food: "Frozen Veggies"
+
+			quantity: 21
+
+		},
+
+		{
+
+			food: "Frozen Pizza"
+
+			quantity: 25
+
+		}
+
+	]
+
+
+export default (state = seedData, action) => {
+
+	console.log("Frozen Reducer is running!");
+
+	console.log(action);
+
+	if(action.type === "updateFrozen") {
+
+		console.log("I care about this action!!!");
+
+		return state;
+
+	} else {
+
+		return state;
+
+	}
+
+}
+
+
+This function will run anytime the Dispatch sends an action to this frozenReducer. The console.logs will let us know that it is running and it will let us know what action happened. If the 
+
+action.type === "updateFrozen" then we will console.log("I care about this") and we are going to run some logic, and then we will return state. So, the store will get updated with state, it
+
+will not really get updated as it was already state.
+
+
+But if it is not action.type === "updateFrozen" and it won't be on those first three actions those ran that redux core is running the we will just return state, we will not be doing 
+
+anything because it is not the action of frozenReducer so we will not care about it.
+
+
+Now we will go back over to our app and we will click the plus (+) button on one of the items of the The Frozen Food Department,
+
+
+							The Frozen Food Department
+
+					     		     TV Dinners: 10
+
+						        Click ->|+| |-|
+
+					   		  Frozen Veggies: 21
+
+								|+| |-|
+
+					   		  Frozen Pizzas: 25
+
+								|+| |-| 
+
+
+So, we have clicked the plus (+) button on TV dinners which is part of the Frozen Food Department and this is what we get on our console,
+
+
++0 
+
+Frozen Reducer is running!
+
+> {type: "updateFrozen", payload: {....}}
+
+I care about this action!!!
+
+Produce Reducer is running!
+
+> {type: "updateFrozen", payload: {....}}
+
+Meat Reducer is running!
+
+> {type: "updateFrozen", payload: {....}}
+
+
+So, here we get Frozen Reducer is running!, we get the action object and then we get "I care about this action!!!".
+
+The Produce Reducer and the Meat Reducer do not care, Frozen does care.
+
+
+So, all we now need to do is update the TV dinners variable, we do not want to mutate state directly.
+
+
+frozenReducer.js 
+
+// All reducers take 2 parameters/arguments
+
+// 1. Current State, usually provide a default state
+
+// 2. Info that came from any action
+
+	const seedData = [
+
+		{
+
+			food: "TV Dinners"
+
+			quantity: 10
+
+		},
+
+		{
+
+			food: "Frozen Veggies"
+
+			quantity: 21
+
+		},
+
+		{
+
+			food: "Frozen Pizza"
+
+			quantity: 25
+
+		}
+
+	]
+
+
+export default (state = seedData, action) => {
+
+	console.log("Frozen Reducer is running!");
+
+	console.log(action);
+
+	if(action.type === "updateFrozen") {
+
+		console.log("I care about this action!!!");
+
+		// WE MAKE A COPY OF STATE BECAUSE WE NEVER MUTATE STATE
+
+		const newState = [...state];
+
+			if(action.payload.operation === "+") {
+
+				newState[action.payload.index].quantity++
+
+			} else if(action.payload.operation === "-") {
+
+
+				newState[action.payload.index].quantity--
+
+			}
+
+			return newState;
+
+	} else {
+
+		return state;
+
+	}
+
+}
+
+
+
+So, here we made a new variable called "newState" and we assigned it to an array which is the same as old state,
+
+
+			const newState = [...state]
+
+This is "destructuring", it is the same thing as if we had sliced the array and made a completely new copy of it. 
+
+
+Now, we are targetting the index property that we have in our payload object inside the frozen action function (updateFrozen/frozenInvUpdate) and on clicking the plus (+) button we are 
+
+increasing the index and on clikcing the minus (-) button we are decreasing the index,
+
+
+			newState[action.payload.index].quantity++;
+
+			newState[action.payload.index].quantity--;
+
+
+So, we are grabbing the index out of the newState, the newState is first assigned to the old state, and the old state is the array in the seedData, so index is 0 means it refers to the 
+
+first item in the array which is the TV Dinners, and as we click the plus (+) button it is going to increase the quantity according to the number of times the plus button was clicked. 
+
+According to this logic we wrote the if-else statement,
+
+
+			if(action.payload.operation === "+"){
+
+				newState[action.payload.index].quantity++
+
+			} else if(action.payload.operation === "-"){
+
+				newState[action.payload.index].quantity--
+
+			}
+
+			return newState;
+
+
+So, once the if-else statement is done running we are going to return the newState.
+
+
+So, if we get the 'updateFrozen' action, the only reason we will get it, is because the frozen action function (updateFrozen/frozenInvUpdate) ran and the only reason this action would run 
+
+is because of the component in the increment function of FrozenDept called "this.props.updateFrozen(operation, index)" and it was passed an operation and an index as arguments.
+
+
+So, the action.type === "updateFrozen" was true because the plus (+) button of the TV Dinners in the FrozenDept was clicked. Then we needed to make a copy of state beacause we do not mess
+
+with the state, we never ever mutate the state,
+
+
+			const newState = [...state];
+
+
+Then we use the if-else logic statement to check to see if it is a plus (+) if it is then we increment it, and if it is a minus (-) then we decrement it, and then we update the newState, we
+
+are not updating the old state as we are not allowed to mutate it. Then the new updated array (newState) and the Store will get updated. 
+
+
+Now as we click plus (+), the number increases, and as we click minus (-), the number decreses. Lets look at the whole round-trip. We have got an Action that is connected to the Dispatch 
+
+inside of our 'react' component. When we run that code the Dispatch kicks it off to all the Reducers, Meat Reducer does not care, the Produce Reducer does not care, Frozen Reducer does care.
+
+So, the meatReducer and the produceReducer just return their old states, frozenReducer makes a copy of state, it updates that state with a new data, it returns that data to the Store 
+
+(rootReducer), and our 'react' component is looking at our 'redux' store, and it notices that something has changed I better re-render. What changed? 
+
+
+The value of the frozenReducer. We need to apply the exact same logic to the other two reducers to get them to work.

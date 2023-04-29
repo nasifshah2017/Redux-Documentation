@@ -1,0 +1,59 @@
+Lecture-86: Adding Meat and Produce
+
+In this lesson we are going to go through setting up the Meat and Produce actions so that we have the full circle of all three of our Reducer, Component and Actions, and we are going to go 
+
+through it from the beginning of each of them and hopefully that will be a very good review, if you already got it down then it is upto you if you want to stick around or if you just want 
+
+to go to the Github repo and check it out but I think it will be a good review to just walkthrough this again and then just try and connect the pieces together. 
+
+
+So, we have got our MeatDept which is our one of the three main components, then the meatReducer and then the main components, then the meatReducer and then the meatAction (meatInvUpdate) 
+
+and they are all open and we are importing the meatAction as updateMeat in our MeatDept.js file, and that is not good enough and the reason behind that is that meatAction (updateMeat()) 
+
+function runs, we need to notify the meatReducer, so that the meatReducer can decide whether to update the state, so that the quality of the meat items in the Store can change, because in 
+
+the MeatDept.js file we are using that piece of state in the 'redux' store (this.props.meatData) so we need to make sure that, our Action updates that,
+
+
+meatInvUpdate.js
+
+export default () => {
+
+	return {
+
+		type: "updateMeat"
+
+	}
+
+}
+
+
+here we need to add the payload, so we need to update our action, we need to update the logic in the meatReducer, so that it updates appropriately.
+
+
+	export default(state = seedData, action) => {
+
+		console.log("Meat Reducer is running!");
+
+		console.log(acion);
+
+		return state;
+
+	} 
+
+
+Then we need to make sure that we get them connected inside of the 'react' component itself. So, we will start from below at our MeatDept.js file, 
+
+
+	function mapStateToProps(state) {
+
+		return {
+
+			meatData: state.meat,
+
+		}
+
+	}
+
+	export default connect(matStateToProps)(MeatDept); 
