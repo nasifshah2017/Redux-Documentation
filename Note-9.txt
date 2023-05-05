@@ -56,4 +56,634 @@ Then we need to make sure that we get them connected inside of the 'react' compo
 
 	}
 
-	export default connect(matStateToProps)(MeatDept); 
+	export default connect(mapStateToProps)(MeatDept); 
+
+
+Our connect() function right now is exporting mapStateToProps and that is what getting us this.props.meatData, and we also need mapDispatchToProps() and this function will take 'dispatch' 
+
+as an argument because that is how we connect the action to dispatch, and the dispatch is how we get the Action over to the Reducer, 
+
+
+	function mapDispatchToProps(dispatch) {
+
+		return bindActionCreators({
+
+			updateMeat: updateMeat
+
+		}, dispatch)
+
+	}
+
+
+If you remember mapDispatchToProps returns "bindActionCreators" and we are going to pass it an object and the time we type the word "bindActionCreators" on VS-code, VS-code automatically
+
+imports it from the 'redux' module (import {bindActionCreators} from 'redux'), if VS-code does not import it automatically then the line in the brackets as we need to manually go at the top
+
+of the file and type out this line. So, we are going to pass it "updateMeat" so that will be actually the "this.props.updateMeat", this is the property of the object that we are passing to 
+
+the bindActionCreators and the value of this property is going to be the "updateMeat" (meatInvUpdate) action that we are importing at the top of the file, and the second argument that we 
+
+need to send to the bindActionCreators is the actual 'dispatch'. So, now we can call "this.props.updateMeat" which is the same as calling the "updateMeat()" function, which is coming from 
+
+the meatInvUpdate.js file, which is this function, 
+
+
+
+meatInvUpdate.js
+
+	export default () => {
+
+		return {
+
+			type: "updateMeat"
+
+		}
+
+	}
+
+
+The only difference is that this function is going to be sent to every Reducer, because it is going to be connected to the 'dispatch'. 
+
+
+Before we do that we go back there and we have this.increment like we had in our other file we do not need the operators in the incremnet() function anymore instead we just need to pass the
+
+"this.props.updateMeat" and thats all we need to do, 
+
+
+	increment = (operation, index) => {
+
+		this.props.updateMeat(operation, index);
+
+	}
+
+
+That's all we need to do. This will automatically call the updateMeat() function (meatInvUpdate) but as we added this function to mapDispatchToProps() function,
+
+
+	function mapDispatchToProps(dispatch) {
+
+		return bindActionCreators({
+
+			updateMeat: updateMeat
+
+		}, dispatch)
+
+
+That is why it is going to sent to every Reducer. So, over inside the meat Action function (or the Action Creator) we are now going to pass the "operation" and the "index", 
+
+
+meatInvUpdate.js
+
+	export default(operation, index) => {
+
+		return {
+
+			type: "updateMeat"
+
+		}
+
+	}
+
+
+And instead of only returning 'updateMeat' we are going to add a payload and the payload is going to be an object and the object is going to have both the operation and the index, 
+
+
+meatInvUpdate.js
+
+	export default(operation, index) => {
+
+		return {
+
+			type: "updateMeat",
+
+			payload: {
+
+				operation,
+				
+				index
+			
+			}
+
+		}
+
+	}
+
+
+So, the Action Creator returns an Action and the Action is just a pass through with the data inside the payload and a type. So, over inside the meatReducer now, we need to add an if-else 
+
+condition. Remember, every single time the meatReducer gets notified it is always going to be an action, and every action must have a type, so now if we make action.type === "updateMeat" 
+
+then this is the department where we need to increment/decrement the items. Instead of only returning state we are going to make a new variable. We will call it as "newState" and we will 
+
+assign it to the current state, with the spread (...) operator to add the current state in to the newState, 
+
+
+export default (state = seedData, action) => {
+
+	console.log("Meat Reducer is running!");
+
+	console.log(action);
+
+	if(action.type === "updateMeat") {
+
+		const newState = [...state];
+
+	}
+
+	return state;
+
+}
+
+
+So, we have the current state (state) coming up as an argument, assigned to the seedData array, that is automatically part of the reducer. It knows what is its current state is, so we are 
+
+taking that state and we are making a copy of it, we are not mutating with the old piece of state. This time to make our lives a little bit easier we will also add the payload and we will 
+
+assign it to "action.payload". We will also check to see the payload which is our object if "payload.operation === +" then that means we need to increment the quantity of the payload by one
+
+(newState[payload.index].quantity++), then we will also use an else if statement and we will do the exact same thing just as we did before but this time we will change the operator to "-", 
+
+"payload.operation === -", 
+
+
+export default (state = seedData, action) => {
+
+	console.log("Meat Reducer is running!");
+
+	console.log(action);
+
+	if(action.type === "updateMeat"){
+
+		const newState = [...state];
+
+		const payload = action.payload;
+
+		if(payload.operation === "+"){
+
+			newState[payload.index].quantity++;
+
+		} else if(payload.operation === "-"){
+
+			newState[payload.index].quantity--;
+
+		}
+
+	}
+
+return state;
+
+} 
+
+
+In another way we can do this instead of doing "+" and "-", if we go back over to the Meat department (MeatDept.js) component instead of passing "+" and "-" we can pass 1 and -1 and we also
+
+need to change the operation that we pass in the increment function to "qChange" which is short for "quantity change", might not be the best variable name but that is what we will pass 
+
+through, 
+
+
+MeatDept.js
+
+import React, { Component } from "react";
+
+import { connect } from "react-redux";
+
+import { bindActionCreators } from "redux";
+
+import updateMeat from "../actions/meatInvUpdate";
+
+
+class MeatDept extends Component {
+
+	increment = (qChange, index) => {
+
+		this.props.updateMeat(operation, index);
+
+	}
+
+	render() {
+
+		const meatInventory = this.props.meatData.map((item, i) => {
+
+			return(
+
+				<div key = {i}>
+
+					<li>{item.food}: {item.quantity}</li>
+
+					<input type = "button" onClick = {() => {this.increment(1, i)}} value = "+" />
+
+					<input type = "button" onClick = {() => {this.increment(-1, i)}} value = "-" />
+
+				</div>
+
+			)
+
+		})
+
+
+		return(
+
+			<div>
+
+				<h1>The Meat Department</h1>
+
+				<ul>
+
+					{meatInventory}
+
+				</ul>
+
+			</div>
+
+		)
+
+	)
+
+}
+
+
+function mapStateToProps(state) {
+
+	return {
+
+		meatData: state.meat
+
+	}
+
+}
+
+
+function mapDispatchToProps(dispatch) {
+
+	return bindActionCreators({
+
+		updateMeat: updateMeat
+
+	}, dispatch)
+
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(MeatDept);
+
+
+
+qChange might not be the best variable name, but that is what we will pass through. Now we will go back to meatInvUpdate and change operation to qChange too, 
+
+
+meatInvUpdate.js
+
+	export default(qChange, index) => {
+
+		return {
+
+			type: "updateMeat",
+
+			payload: {
+
+				qChange,
+
+				index
+
+			}
+
+		}
+
+	}
+
+
+Now, in the meatReducer we can reduce our code, we do not need to check what the operation is as we already know that,
+
+
+	if(payload.operation === "+") {
+
+
+It will get incremented by 1 or it will get decremented by -1,
+
+
+	else(payload.operation === "-"){
+
+
+so we can get rid of this logic here and we will assign the "newState[payload.index].quantity" directly to "payload.qChange", 
+
+
+export default (state = seedData, action) => {
+
+	console.log("Meat Reducer is running!");
+
+	console.log(action):
+
+	if(action.type === "updateMeat") {
+
+		const newState = [...state];
+
+		const payload = action.payload;
+
+		newState[payload.index].quantity += payload.qChange;
+
+	}
+
+	return state;
+
+}
+
+
+So, the payload is coming from the action (action.payload) action.payload over in the meat action (meatInvUpdate.js) has a qChange, 
+
+
+meatInvUpdate.js
+
+export default (qChange, index) => {
+
+	return {
+
+		type: "updateMeat"
+
+		payload: {
+
+			qChange,
+
+			index
+
+		}
+
+	}
+
+}
+
+
+And qChange will be whatever the first thing is at the MeatDept.js which is going to be either 1 or -1,
+
+
+	increment = (qChange, index) => {
+
+		this.props.updateMeat(qChange, index);
+
+	}
+
+
+Which means all the way back to the meatReducer we are going to "+=" either -1 or +1 we do not really care but the "newState[payload.index].quantity" will be updated correctly and now we 
+
+can simply return newState and it saves ourselves a few lines, and if it is not the meatReducer action type then we will return the old state, 
+
+
+export default(state = seedData, action) => {
+
+	console.log("Meat Reducer is running!");
+
+	console.log(action);
+
+	if(action.type === "updateMeat"){
+
+		const newState = [...state];
+
+		const payload = action.payload;
+
+		newState[payload.index].quantity += payload.qChange;
+
+		return newState;	// Returning the updated state
+
+	} else {
+
+		return state;
+
+
+	// Else if meat action was not selected then return the old state
+
+
+
+So, the if statement runs only, if the action that we are getting is "updateMeat" otherwise just return the state as it was. So, that covers the meatReducer. We will go back to the browser
+
+and give it a try,
+
+
+localhost:3000
+
+
+			The Frozen Food Department!
+
+			    TV Dinners: 10
+
+				|+| |-|
+
+			    Frozen Veggies: 21
+
+				|+| |-|
+
+			    Frozen Pizzas: 25
+
+				|+| |-|
+
+
+			The Meat Food Department
+
+			    Chicken Brest: 14
+
+		       Click ->	|+| |-|	
+
+			       Bacon: 11
+
+				|+| |-|
+
+			     Mahi Mahi: 35
+
+				|+| |-|
+
+			      Salmon: 135
+
+				|+| |-|
+
+
+		     The Produce Food Department
+
+			   Lettuce: 14
+
+			     |+| |-|
+
+			  Turnips: 11
+
+			     |+| |-|
+
+			    Apples: 35
+
+			     |+| |-|
+
+			  Cilantro: 135
+
+			     |+| |-|
+
+
+And now it is incrementing and decrementing the items the way it should. The produce department does not work yet, but we just need to update it the same way as the meat department, and set
+
+up the dispatch there.
+
+
+produceInvUpdate.js
+
+
+	export default (qChange, index) => {
+
+		return {
+
+			type: "updateProduce",
+
+			payload: {
+
+				qChange
+
+				index
+
+			}
+
+		}
+
+	}
+
+
+produceReducer.js
+
+// This is the Produce Reducer. The backend produce department
+
+// Creating demo data
+
+
+const seedData = [
+
+	{
+
+		food: "Lettuce"
+
+		quantity: 15
+
+	},
+
+	{
+
+		food: "Spinach"
+
+		quantity: 22
+
+	},
+
+	{
+
+		food: "Cucumbers",
+
+		quantity: 35
+
+	}
+
+]
+
+
+
+export default (state = seedData, action) => {
+
+	if(action.type === "updateProduce") {
+
+		const payload = action.payload;
+
+		let newState = [...state];
+
+		newState[payload.index].quantity = newState[payload.index].quantity + payload.qChange;
+
+		return newState;
+
+	}
+
+	else {
+
+		return state;
+
+	}
+
+
+ProduceDept.js
+
+import React, { Component } from "react";
+
+import { connect } from "react-redux";
+
+import updateProduce from "../actions/produceInvUpdate";
+
+import { bindActionCreators } from "redux";
+
+
+class ProduceDept extends Component {
+
+	increment = (qChange, index) => {
+
+		this.props.updateProduce(qChange, index);
+
+	}
+
+	render() {
+
+		const produceInventory = this.props.produceData.map((item, i) => {
+
+			return(
+
+				<div key = {i}>
+
+					<li>{item.food}: {item.quantity}</li>
+
+					<input type = "button" onClick = {() => {this.increment(1, i)}} value = "+" />
+
+					<input type = "button" onClick = {() => {this.increment(-1, i)}} value = "-" />
+
+				</div>
+
+			)
+
+		})
+
+
+		return(
+			
+			<div>
+				
+				<h1>The Produce Department</h1>
+
+				<ul>
+
+					{produceInventory}
+
+				</ul>
+
+			</div>
+
+		)
+
+	}
+
+}
+
+
+
+function mapStateToProps(state) {
+
+	return {
+
+		produceData: state.produce
+
+	}
+
+}
+
+
+
+function mapDispatchToProps(dispatch){
+
+	return bindActionCreators({
+
+		updateProduce: updateProduce
+
+	}, dispatch)
+
+}
+
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProduceDept); 
+	
