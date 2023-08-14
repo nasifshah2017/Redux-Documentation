@@ -1,0 +1,237 @@
+Lecture-87: Adding the Router
+
+In this lesson we are going to add the React Router to our application. So, we have already got Redux. Redux has pretty much taken oer our index.js file. Now, we are going to add the Router
+
+as we showed in the last lesson. We can place the Router component around our App component, but in our experience index.js gets really crowded really fast if we have both the Router and 
+
+all of the Redux setup both of them are going to need more and more code. So, instead we will close the index.js file and we are going to setup our Router component on the App.js fle. This 
+
+is our convention. There are multiple ways to do it, but the main thing is yoiu never ever want more than one Router, and it is very easy to fall in that trap, if you do not have a standard
+
+convention, and you get all kinds of strange behaviour. 
+
+
+App.js
+
+import React from "react";
+
+import "./App.css";
+
+import FrozenDept from "./components/FrozenDept";
+
+import MeatDept from "./components/MeatDept";
+
+import ProduceDept from "./components/ProduceDept";
+
+
+function App() {
+
+	return (
+
+		<div className = "App">
+
+			<FrozenDept />
+
+			<MeatDept />
+
+			<ProduceDept />
+
+		</div>
+
+	);
+
+}
+
+
+export default App;
+
+
+This will hopefully go fairly quickly, we are going to open up the terminal and in the redux 101 folder we are going to "npm install react-router-dom",
+
+
+Terminal:
+
+	npm install react-router-dom
+
+
+Now, we are going to get rid of our terminal window and inside of our App.js file we are going to import "BrowserRouter" as the "Router" and the "Route" from the "react-router-dom". 
+
+
+App.js
+
+import React from "react";
+
+import "./App.css";
+
+import FrozenDept from "./components/FrozenDept";
+
+import MeatDept from "./components/MeatDept";
+
+import ProduceDept from "./components/ProduceDept";
+
+import { BrowserRouter as Router, Route } from "react-router-dom";
+
+
+
+// So, now we have the Router component and now around the div tags of the App class we are going to drop the Router component, 
+
+
+function App() {
+
+	return(
+
+		<Router>
+
+			<div className = "App">
+
+				<FrozenDept />
+
+				<MeatDept />
+
+				<ProduceDept />
+
+			</div>
+
+		</Router>
+
+	);
+
+}
+
+
+export default App; 
+
+
+The Router component has one child, our div, and then the div has multiple children (FrozenDept component, MeatDept component and ProduceDept component). So, after we save this file and we 
+
+go to our browser we see nothing changed,
+
+
+localhost:3000 
+
+				The Frozen Food Department! 
+
+					TV Dinners: 9
+
+					   |+| |-|
+
+				     Frozen Veggies: 21
+
+ 					   |+| |-|
+
+				     Frozen Pizzas: 25
+
+					   |+| |-|
+
+		                  The Meat Food Department!
+
+				       Chicken Brest: 14
+
+					   |+| |-|
+
+				          Bacon: 11
+
+					   |+| |-|
+
+                                        Mahi Mahi: 35
+
+					   |+| |-|
+
+					 Salmon: 135
+
+ 					   |+| |-|
+
+				   The Produce Department!
+
+					Lettuce: 14
+
+					  |+| |-|
+
+					Turnips: 11
+
+					  |+| |-|
+
+				        Apples: 35
+
+					  |+| |-|
+
+				       Cilantro: 135
+
+					  |+| |-|
+
+
+It is still working the way it has and all the Components are working the way they had. 
+
+
+Now, we will set up the Route component for each Component, and we will set up the "path" for each component, and if the user visit a particular path, that path will render that 
+
+corressponding Component,
+
+
+App.js
+
+import React from "react";
+
+import "./App.css";
+
+import FrozenDept from "./components/FrozenDept";
+
+import MeatDept from "./components/MeatDept";
+
+import ProduceDept from "./components/ProduceDept";
+
+import { BrowserRouter as Router, Route } from "react-router-dom";
+
+
+
+function App() {
+
+	return (
+
+		<Router>
+
+			<div className = "App">
+
+				<Route path = "/frozen-dept" component = {FrozenDept} />
+
+				<Route path = "/meat-dept" component = {MeatDept} />
+
+				<Route path = "/produce-dept" component = {ProduceDept} />
+
+			</div>
+
+		</Router>
+
+	);
+
+}
+
+
+export default App;
+
+
+Now, if we save this file and go back to our app we are not going to see anything on our screen because the home page link (localhost:3000) does not match any of the routes that we defined.
+
+Now, if we manually put the frozen-dept route that we have defined, 
+
+
+localhost:3000/frozen-dept
+
+
+				The Frozen Food Department! 
+
+					TV Dinners: 10
+
+					   |+| |-|
+
+				     Frozen Veggies: 21
+
+ 					   |+| |-|
+
+				     Frozen Pizzas: 25
+
+					   |+| |-|
+
+
+Then we get the FrozenDept component rendered on our page, and Redux is working the same it always has as we click the plus button the quantity
+		
